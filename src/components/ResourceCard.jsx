@@ -1,47 +1,69 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "./UserContext";
 
-const ResourceCard = ({ teamId }) => {
+const ResourceCard = (props) => {
   const [_resource, setResource] = useState([]);
   const [count, setCount] = useState(0);
   const { user } = useContext(UserContext);
 
-  // VARIABLES FOR FETCH
-  let url = "http://localhost:3000/resource/list";
-  let _payload = { teamId: teamId };
-  let fetchHeader = {
-    method: "POST",
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(_payload),
-  };
+  useEffect(() => {
+    if (props.resources) {
+      setResource(props.resources.sort((a, b) => b.votes - a.votes));
+    }
+  });
 
-  if (teamId === "allTeams") {
-    url = "http://localhost:3000/resource/listAll";
-    fetchHeader = {
-      method: "GET",
+  //the props.resources resource info:
+  //   category: "User Experience"
+  // createdAt: "2021-04-09T09:01:10.284Z"
+  // description: "Our latest benchmark of Mobile UX reveals that 52% of e-commerce sites still have severe mobile UX issues — leading to users abandoning their mobile shopping experience. Here are 18 common Mobile UX pitfalls."
+  // image: "https://cdn.baymard.com/data-broker/graphic-300396-937889825ef489278518d3511613950d.jpg"
+  // link: "https://baymard.com/blog/2021-current-state-mobile-ecommerce"
+  // tags: "Design"
+  // teamId: "60682ccc27cd25b81f7c3e8b"
+  // title: "The Current State of Mobile UX (18 Common Pitfalls)"
+  // updatedAt: "2021-04-09T09:03:57.633Z"
+  // votes: 1
+  // __v: 0
+  // _id: "607017d6662c6028c8e0bc6d"
+
+  if (!props.resources) {
+    // VARIABLES FOR FETCH
+    let url = "http://localhost:3000/resource/list";
+    let _payload = { teamId: props.teamId };
+    let fetchHeader = {
+      method: "POST",
       headers: {
         Accept: "application/json, text/plain, */*",
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(_payload),
     };
-  }
 
-  useEffect(() => {
-    fetch(url, fetchHeader)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        // Sort the resources by default highest vote count to lowest
-        setResource(data.sort((a, b) => b.votes - a.votes));
-      })
-      .catch((err) => {
-        alert(err);
-      });
-  }, [count]);
+    if (props.teamId === "allTeams") {
+      url = "http://localhost:3000/resource/listAll";
+      fetchHeader = {
+        method: "GET",
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+        },
+      };
+    }
+
+    useEffect(() => {
+      fetch(url, fetchHeader)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // Sort the resources by default highest vote count to lowest
+          setResource(data.sort((a, b) => b.votes - a.votes));
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    }, [count]);
+  }
 
   const handleUpvote = (event) => {
     event.preventDefault();
@@ -122,6 +144,8 @@ const ResourceCard = ({ teamId }) => {
         alert("Downvote Failed!");
       });
   };
+
+  console.log("passing resource card", _resource);
 
   return (
     <div className="container">

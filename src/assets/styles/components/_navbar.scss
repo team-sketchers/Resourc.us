@@ -1,12 +1,8 @@
-nav {
-  min-height: 100vh;
-  &.bg-dark {
-    background-color: #293042 !important;
-    color: #fff;
-    a {
-      color: #adb5bd;
-      &:hover {
-        text-decoration: none;
+
+nav.sidebar {
+    min-height: 100vh;
+    &.bg-dark {
+        background-color: #293042!important;
         color: #fff;
       }
     }

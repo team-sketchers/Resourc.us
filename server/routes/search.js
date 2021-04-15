@@ -5,7 +5,7 @@ const Cors = require("cors");
 const BodyParser = require("body-parser");
 const router = express.Router();
 
-const client = new MongoClient(mongoData.url);
+const client = new MongoClient(mongoData.url, { useNewUrlParser: true, useUnifiedTopology: true});
 
 router.use(BodyParser.json());
 router.use(BodyParser.urlencoded({ extended: true }));
@@ -15,10 +15,11 @@ let collection;
 
 router.get('/', async (request, response) => {
   try {
-    const test = 'codesmith'
+    let responseObj = {};
+
     await client.connect();
-    collection = client.db(mongoData.MONGO_DB).collection("teams");
-    let result = await collection.aggregate([
+    let collectionTeam = client.db(mongoData.MONGO_DB).collection("teams");
+    let teamResult = await collectionTeam.aggregate([
       {
         "$search": {
           "index": "ind1",
@@ -32,11 +33,66 @@ router.get('/', async (request, response) => {
           }
         }
       }
+<<<<<<< HEAD
     ]).toArray();
     console.log('retrieving search queries', result)
     response.status(200).send(result);
   } catch (e) {
     response.status(500).send({ message: e.message });
+=======
+      }
+  ]).toArray();
+  responseObj.team = teamResult;
+
+  //functionality to grab tags
+  // collectionTags = client.db(mongoData.MONGO_DB).collection("resources");
+  // let resultTags = await collectionTags.aggregate([
+  //     {
+  //       $unwind: "$tags"
+  //     }
+  //   ]).toArray()
+
+  // function Equals(resourceTag, userQuery){
+  //   resourceTag = resourceTag.toLowerCase()
+  //   userQuery = userQuery.toLowerCase()
+
+  //   if(resourceTag == userQuery) return true;
+  //   return false
+  // }
+
+  
+  // let resourceArray = [];
+  // if(resultTags) {
+  //   for(let resources of resultTags) {
+  //     if(Equals(resources.tags, request.query.query)){
+  //       resourceArray.push(resources)
+  //     }
+  //   }
+  // }
+
+  let collectionRes = client.db(mongoData.MONGO_DB).collection("resources");
+  let resourcesArr = await collectionRes.aggregate([
+    {
+      "$search": {
+        "autocomplete": {
+            "query": `${request.query.query}`,
+            "path": "title",
+            "fuzzy": {
+                "maxEdits": 2,
+                "prefixLength": 3
+            }
+        }
+    }
+    }
+]).toArray();
+
+
+  responseObj.tags = resourcesArr;
+  response.status(200).send(responseObj);
+
+} catch (e) {
+      response.status(500).send({ message: e.message });
+>>>>>>> 081b235f49e23ad5163575e9405d39934177b455
   }
 });
 

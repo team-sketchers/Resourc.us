@@ -3,7 +3,7 @@ import { Link, Route } from "react-router-dom";
 import { UserContext } from "../components/UserContext";
 import { useHistory } from "react-router-dom";
 
-const Teams = () => {
+const Teams = (props) => {
   const [_teams, setTeams] = useState([]);
   const { user } = useContext(UserContext);
   const history = useHistory();
@@ -11,13 +11,13 @@ const Teams = () => {
   useEffect(() => {
     fetch("http://localhost:3000/teams/list")
       .then((response) => {
-        return response.json(); //Parses to JSON
+        return response.json();
       })
       .then((data) => {
-        setTeams(data);
+        if (!props.teams) setTeams(data);
       })
       .catch((err) => {
-        console.log("List Teams Failed: ", err);
+        console.log("List Teams Failed:", err);
       });
   }, []);
 
