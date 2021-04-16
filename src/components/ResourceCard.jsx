@@ -1,10 +1,26 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useLayoutEffect } from "react";
 import { UserContext } from "./UserContext";
 
 const ResourceCard = (props) => {
   const [_resource, setResource] = useState([]);
   const [count, setCount] = useState(0);
+  const [rawResourceData, setRawData] = useState([])
   const { user } = useContext(UserContext);
+  const sortingPreference = props.sortingPref;
+
+  //useing hook for testing purposes
+  useEffect(() => {
+    console.log(sortingPreference, _resource)
+  }, [sortingPreference])
+  useEffect(() => {
+    if(sortingPreference === 'newest') {
+      setResource(rawResourceData.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)))
+    }
+    else if(sortingPreference === 'most-upvoted') {
+      setResource(rawResourceData.sort((a, b) => b.votes - a.votes))
+    }
+    else return;
+  }, [sortingPreference])
 
   useEffect(() => {
     if (props.resources) {
@@ -43,7 +59,10 @@ const ResourceCard = (props) => {
         })
         .then((data) => {
           // Sort the resources by default highest vote count to lowest
-          setResource(data.sort((a, b) => b.votes - a.votes));
+          setRawData(data);
+          setResource([])
+          if(sortingPreference === 'newest') setResource(data);
+          else setResource(data.sort((a, b) => b.votes - a.votes));
           props.loadInitial(data);
         })
         .catch((err) => {
