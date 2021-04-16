@@ -1,38 +1,36 @@
 import React from 'react'
 import SearchField from "react-search-field";
-import FilteredResults from "../components/FilteredResults";
-import { Link, Route } from 'react-router-dom';
-const Search = ({setShowResults, setSearchData}) => {
 
-  const resultArr = [];
+const Search = ({ setShowResults, setSearchData }) => {
 
   const onClick = () => {
     setShowResults(true);
   }
-  function searchDatabase(e, val) {
-    let textInput = e;
-    let data = fetch(`http://localhost:3000/search?query=${e}`)
-    .then(response => response.json())
-    .then(data => {
-      setSearchData(el => data)
-      onClick();
-    })
-    .catch(err => console.log(err));
+
+  const searchDatabase = (e) => {
+    fetch(`http://localhost:3000/search?query=${e}`)
+      .then(response => response.json())
+      .then(data => {
+        setSearchData({
+          team: [],
+          resourceSearch: [],
+        })
+        setSearchData(data)
+        onClick();
+      })
+      .catch(err => console.log(err));
   }
 
   return (
     <div>
       <SearchField
-          placeholder="Search..."
-          onSearchClick={(e)=> searchDatabase(e)}
-          classNames="test-class"
-          onEnter={(e, val) => searchDatabase(e)}
+        placeholder="Search..."
+        onSearchClick={(e) => searchDatabase(e)}
+        classNames="test-class"
+        onEnter={(e, val) => searchDatabase(e)}
       />
     </div>
   )
-
 }
 
-
 export default Search;
-

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { UserContext } from "./UserContext";
 
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 // bootstrap components
 import Button from "react-bootstrap/Button";
@@ -11,16 +12,30 @@ import Form from "react-bootstrap/Form";
 import Navbar from "react-bootstrap/Navbar";
 import FormControl from "react-bootstrap/FormControl";
 
-function Navbars() {
+const Navbars = () => {
+  const { userIsLoggedIn } = useContext(UserContext);
+
   return (
     <Navbar className="sidebar" bg="dark" expand="lg">
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Link to="/"><h1>Resourc.us</h1></Link>
+          <Link to="/">
+            <h1>Resourc.us</h1>
+          </Link>
           <ul>
-            <li><Link to='/teams'>All Teams</Link></li>
-            <li><Link to='/'>All Resources</Link></li>
+            <li>
+              <Link to="/teams">All Teams</Link>
+            </li>
+            <li>
+              <Link to="/">All Resources</Link>
+            </li>
+
+            {userIsLoggedIn() ? (
+              <li>
+                <Link to="/myTeams">My Teams</Link>
+              </li>
+            ) : null}
             {/* <li><Link to='/CreateResource'>Create Resource</Link></li> */}
           </ul>
         </Nav>
@@ -31,6 +46,6 @@ function Navbars() {
       </Navbar.Collapse>
     </Navbar>
   );
-}
+};
 
 export default Navbars;

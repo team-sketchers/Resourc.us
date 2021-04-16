@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
-import { login } from '../utility';
+import { UserProvider } from '../UserContext';
 
 export const SignupForm = () => {
   const [values, setValues] = useState({
@@ -26,10 +26,9 @@ export const SignupForm = () => {
     })
       .then(resp => resp.json())
       .then(data => {
-        // Enter something that stores or handles cookies or JWT
         alert("Signup Success!")
         history.push("/");
-        login();
+        userLogin();
       })
       .catch(err => {
         alert("Signup Failed!")
@@ -47,19 +46,19 @@ export const SignupForm = () => {
   return (
     <form onSubmit={onSubmit}>
       <div className="form-group">
-        <input type="text" className="form-control" placeholder="firstname" id="firstname" ref={register} onChange={handleChange} />
+        <input type="text" className="form-control" placeholder="firstname" name="firstname" id="firstname" ref={register} onChange={handleChange} />
       </div>
 
       <div className="form-group">
-        <input type="text" className="form-control" placeholder="lastname" id="lastname" ref={register} onChange={handleChange} />
+        <input type="text" className="form-control" placeholder="lastname" name="lastname" id="lastname" ref={register} onChange={handleChange} />
       </div>
 
       <div className="form-group">
-        <input type="email" className="form-control" placeholder="email" id="email" ref={register} onChange={handleChange} />
+        <input type="email" className="form-control" placeholder="email" name="email" id="email" ref={register} onChange={handleChange} />
       </div>
 
       <div className="form-group">
-        <input type="password" className="form-control" placeholder="password" id="password" ref={register} onChange={handleChange} />
+        <input type="password" className="form-control" placeholder="password" name="password" id="password" ref={register} onChange={handleChange} />
       </div>
 
       <div className="form-group">

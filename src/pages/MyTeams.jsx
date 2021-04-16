@@ -3,27 +3,25 @@ import { Link } from "react-router-dom";
 import { UserContext } from "../components/UserContext";
 import { useHistory } from "react-router-dom";
 
-const Teams = (props) => {
+const MyTeams = () => {
   const [_teams, setTeams] = useState([]);
-  const { user, userIsLoggedIn } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const history = useHistory();
 
   useEffect(() => {
-    if (props.teams) {
-      setTeams(props.teams);
-    }
-  }, []);
-
-  useEffect(async () => {
-    await fetch("http://localhost:3000/teams/list")
+    fetch("http://localhost:3000/teams/list")
       .then((response) => {
         return response.json(); //Parses to JSON
       })
       .then((data) => {
-        if (!props.teams) setTeams(data);
+        //filter out teams whose user list does not contain current user id
+        const filteredData = data.filter((el, i, idx) => {
+          return el.userList.includes(user.user._id);
+        });
+        setTeams(filteredData);
       })
       .catch((err) => {
-        console.log("GET FAILED", err);
+        console.log("List My Teams Failed", err);
       });
   }, []);
 
@@ -47,15 +45,6 @@ const Teams = (props) => {
 
   const joinTeam = async (e, teamId) => {
     //e.preventDefault();
-    if (!userIsLoggedIn()) {
-      // TODO: need to redirect to login instead.
-      // Using this ghetto workaround until then.
-      alert("You must be logged in to join a team!");
-      history.push("/");
-      history.goBack();
-      return;
-    }
-
     await fetch("http://localhost:3000/teams/join", {
       method: "POST",
       headers: {
@@ -68,10 +57,10 @@ const Teams = (props) => {
     })
       .then((rsp) => rsp.json())
       .then((data) => {
-        // Don't do anything with the data yet.
+        console.log("JOIN TEAM SUCCESS");
       })
       .catch((err) => {
-        alert("You have already joined this team!", err);
+        alert("JOIN TEAM FAILED: ", err);
         history.goBack();
       });
   };
@@ -100,8 +89,7 @@ const Teams = (props) => {
                 {team.resourceCount}
               </div>
               <div>
-                <i className="bx bxs-user-account"></i>
-                {team.userList === undefined ? 0 : team.userList.length}
+                <i className="bx bxs-user-account"></i> {team.userList.length}
               </div>
             </div>
             <article>
@@ -109,14 +97,6 @@ const Teams = (props) => {
             </article>
             <div className="actions">
               <div>
-                <Link
-                  className="btn btn-default"
-                  to={"/teams/" + team._id}
-                  onClick={(e) => joinTeam(e, team._id)}
-                >
-                  Join
-                </Link>
-                {/* <Link className="btn btn-primary" to={"/teams/" + team.name.toLowerCase().trim().replace(/\s/g, "-")} team={team}>View</Link> */}
                 <Link className="btn btn-primary" to={"/teams/" + team._id}>
                   View
                 </Link>
@@ -129,4 +109,4 @@ const Teams = (props) => {
   );
 };
 
-export default Teams;
+export default MyTeams;
