@@ -118,18 +118,20 @@ teamController.findTeam = (req, res, next) => {
     });
 }
 
-teamController.listThreeTeams = (req, res, next) => {
-  Team.find({}, null, { limit: 3 })
+teamController.topTeams = (req, res, next) => {
+  Team.find({})
+    .sort({ resourceCount: -1})
+    .limit(5)
     .then(data => {
       res.locals.response = data;
-      console.log('teamController.listThreeTeams:', '3 list found: ', res.locals.response)
+      console.log('teamController.topTeams:', 'top teams found: ', res.locals.response)
       next();
     })
     .catch(err => {
       next({
         log: `List 3 Teams - ERROR: ${err}`,
         message: {
-          err: 'Error occured in teamController.listThreeTeams',
+          err: 'Error occured in teamController.topTeams',
           message: err
         }
       })

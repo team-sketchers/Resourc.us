@@ -18,10 +18,10 @@ router.get('/list/:id',
   }
 );
 
-router.get('/listThree',
-  teamController.listThreeTeams,
+router.get('/topTeams',
+  teamController.topTeams,
   (req, res) => {
-    console.log('list 3 teams router is working');
+    console.log('top teams router is working');
     res.status(200).json(res.locals.response);
   }
 );

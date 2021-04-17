@@ -3,8 +3,6 @@ import { UserContext } from "./UserContext";
 
 const ResourceCard = (props) => {
   const [_resource, setResource] = useState([]);
-  const [count, setCount] = useState(0);
-  //const [rawResourceData, setRawData] = useState([]);
   const { user } = useContext(UserContext);
   const sortingPreference = props.sortingPref;
 
@@ -22,7 +20,7 @@ const ResourceCard = (props) => {
 
   useEffect(() => {
     sortResourcesByPreference(_resource);
-  }, [sortingPreference, count]);
+  }, [sortingPreference]);
 
   useEffect(() => {
     if (props.resources) {
@@ -105,9 +103,6 @@ const ResourceCard = (props) => {
             newResource[i] = data;
           }
         }
-
-        setCount(count + 1);
-
         // Sort the resources by default highest vote count to lowest
         sortResourcesByPreference(newResource);
         return;
@@ -149,7 +144,7 @@ const ResourceCard = (props) => {
             newResource[i] = data;
           }
         }
-        setCount(count + 1);
+        // setCount(count + 1);
         // Sort the resources by default highest vote count to lowest
         sortResourcesByPreference(newResource);
       })

@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 // import router
 import { Route, Link, useLocation, BrowserRouter, Switch, Redirect } from "react-router-dom";
@@ -23,13 +23,15 @@ import { UserContext } from './components/UserContext';
 import SearchNav from "./components/SearchNav";
 
 const App = () => {
-  const location = useLocation().pathname;
   const [button, setButton] = useState(<Link to='/CreateResource' className="btn btn-success">Create Resource</Link>);
   const [showResults, setShowResults] = React.useState(false)
   const [results, setSearchData] = React.useState([])
   const { user, userLogout, userIsLoggedIn } = useContext(UserContext)
   const [_resourceInitalLoad, setResourceInitial] = useState([]);
   const [initialLoad, setInitialLoadStatus] = useState(false)
+  let location = useLocation();
+  let pathName = location.pathname;
+  let isMounted = true;
 
   const loadIntialResources = (data) => {
     if (!initialLoad) {
@@ -38,15 +40,20 @@ const App = () => {
     }
   }
 
-  useLayoutEffect(() => {
-    if (location === '/teams' | '/searchResults') {
-      setButton(<Link to='/CreateTeam' className="btn btn-success">Create Team</Link>);
-    } else if (location === '/CreateTeam' || location === '/CreateResource' || location === '/login' || location === '/signup') {
-      setButton('');
-    } else {
-      setButton(<Link to='/CreateResource' className="btn btn-success">Create Resource</Link>);
-    }
-  }, [location, user]);
+  const whichButton = () => {
+      if (pathName === '/teams' || pathName === '/searchResults') {
+        setButton(<Link to='/CreateTeam' className="btn btn-success">Create Team</Link>);
+      } else if (pathName === '/CreateTeam' || pathName === '/CreateResource' || pathName === '/login' || pathName === '/signup') {
+        setButton('');
+      } else {
+        setButton(<Link to='/CreateResource' className="btn btn-success">Create Resource</Link>);
+      }
+  }
+
+  useEffect(() => {
+    console.log('App hook invoked', pathName);
+    whichButton();
+  }, [pathName]);
 
   return (
     <BrowserRouter>
