@@ -149,7 +149,7 @@ resourceController.updateUserUpvoteList = (req, res, next) => {
     votes: requestBody.votes + numVotes,
   },
     {
-      returnNewDocument: true
+      new: true
     })
     .then(data => {
       res.locals.response = data;

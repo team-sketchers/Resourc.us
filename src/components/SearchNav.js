@@ -16,7 +16,6 @@ const SearchNav = (props) => {
 
   useLayoutEffect(() => {
     setKey(resourceSearch.length && !teamSearch.length ? 'Resources' : 'Teams')
-    console.log("props.location.state", props.location.state)
   }, [props])
 
   return (
