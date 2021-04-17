@@ -3,7 +3,7 @@ import { UserContext } from "./UserContext";
 
 const ResourceCard = (props) => {
   const [_resource, setResource] = useState([]);
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
   const { user } = useContext(UserContext);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const ResourceCard = (props) => {
         .catch((err) => {
           //alert(err);
         });
-    }, [count]);
+    }, []);
   }
 
   const handleUpvote = (event) => {
@@ -83,7 +83,6 @@ const ResourceCard = (props) => {
             newResource[i] = data;
           }
         }
-        setCount(count + 1);
         // Sort the resources by default highest vote count to lowest
         setResource(newResource.sort((a, b) => b.votes - a.votes));
       })
@@ -123,7 +122,7 @@ const ResourceCard = (props) => {
             newResource[i] = data;
           }
         }
-        setCount(count + 1);
+        // setCount(count + 1);
         // Sort the resources by default highest vote count to lowest
         setResource(newResource.sort((a, b) => b.votes - a.votes));
       })
