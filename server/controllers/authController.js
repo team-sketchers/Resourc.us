@@ -14,7 +14,7 @@ authController.generateAccessToken = (req, res, next) => {
     next(e)
   }
 
-  res.cookie("jwt", res.locals.token)
+  res.cookie("token", res.locals.token)
   next();
 }
 
