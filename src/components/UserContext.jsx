@@ -19,7 +19,6 @@ const UserProvider = ({ children }) => {
     })
       .then((rsp) => rsp.json())
       .then((data) => {
-        document.cookie = `token=${data.token}`;
         setUser({
           user: data.user,
         });
@@ -32,10 +31,11 @@ const UserProvider = ({ children }) => {
   };
 
   // userLogout updates the user data to default
-  const userLogout = () => {
+  const userLogout = (e) => {
+    e.preventDefault();
     // Set the cookie to an expired time to remove it.
     // TODO: Should still do more thorough userLogout authentication though...
-    document.cookie = "token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = `token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`;
 
     // Clear current user
     setUser({

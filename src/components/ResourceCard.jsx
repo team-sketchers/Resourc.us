@@ -1,10 +1,26 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useLayoutEffect } from "react";
 import { UserContext } from "./UserContext";
 
 const ResourceCard = (props) => {
   const [_resource, setResource] = useState([]);
-  // const [count, setCount] = useState(0);
   const { user } = useContext(UserContext);
+  const sortingPreference = props.sortingPref;
+
+  const sortResourcesByPreference = (arr) => {
+    if (sortingPreference === "newest") {
+      let newArr = [
+        ...arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+      ];
+      setResource(newArr);
+    } else if (sortingPreference === "most-upvoted") {
+      let newArr = [...arr.sort((a, b) => b.votes - a.votes)];
+      setResource(newArr);
+    }
+  };
+
+  useEffect(() => {
+    sortResourcesByPreference(_resource);
+  }, [sortingPreference]);
 
   useEffect(() => {
     if (props.resources) {
@@ -43,7 +59,10 @@ const ResourceCard = (props) => {
         })
         .then((data) => {
           // Sort the resources by default highest vote count to lowest
-          setResource(data.sort((a, b) => b.votes - a.votes));
+          //setRawData(data);
+          setResource([]);
+          if (sortingPreference === "newest") setResource(data);
+          else setResource(data.sort((a, b) => b.votes - a.votes));
           props.loadInitial(data);
         })
         .catch((err) => {
@@ -78,13 +97,16 @@ const ResourceCard = (props) => {
       })
       .then((data) => {
         const newResource = _resource;
+
         for (let i = 0; i < newResource.length; i++) {
           if (newResource[i].link === data.link) {
             newResource[i] = data;
           }
         }
         // Sort the resources by default highest vote count to lowest
-        setResource(newResource.sort((a, b) => b.votes - a.votes));
+        sortResourcesByPreference(newResource);
+        return;
+        //setResource(newResource.sort((a, b) => b.votes - a.votes));
       })
       .catch((err) => {
         alert("Upvote Failed!");
@@ -124,7 +146,7 @@ const ResourceCard = (props) => {
         }
         // setCount(count + 1);
         // Sort the resources by default highest vote count to lowest
-        setResource(newResource.sort((a, b) => b.votes - a.votes));
+        sortResourcesByPreference(newResource);
       })
       .catch((err) => {
         alert("Downvote Failed!");
