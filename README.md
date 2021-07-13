@@ -41,4 +41,4 @@ Run server and (production or development build) then open `localhost:3000` in y
 
 ## Credits
 
-Sean, Jen, Eric, Ethan
+Sean, Julia, Eric, Josh
